@@ -1,0 +1,4 @@
+[1,"==> quarto preview Hw 1.qmd --to html --no-watch-inputs --no-browse\n\n"]
+[1,"\u001B[31m\n\nprocessing file: Hw-1.rmarkdown\n\u001B[39m\r  |                                                          \r  |                                                    |   0%\r  |                                                          \r  |...                                                 |   7%                  \r  |                                                          \r  |.......                                             |  13% [unnamed-chunk-1]"]
+[1,"\u001B[31m\n\n\u001B[39m"]
+[1,"\u001B[31mError in `library()`:\n! there is no package called 'ggplot'\nBacktrace:\n    ▆\n 1. └─base::library(ggplot)\n\u001B[39m\u001B[31m\nQuitting from Hw-1.rmarkdown:16-25 [unnamed-chunk-1]\n\u001B[39m\r                                                                                                            \n\u001B[31mExecution halted\n\u001B[39m"]

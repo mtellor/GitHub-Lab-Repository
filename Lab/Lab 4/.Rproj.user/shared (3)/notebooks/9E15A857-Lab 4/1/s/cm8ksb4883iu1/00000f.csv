@@ -1,0 +1,8 @@
+"0","met_avg %>%"
+"0","  filter(!(region %in% NA)) %>%"
+"0","  ggplot()+"
+"0","  geom_bar(mapping=aes(x=elev_cat,fill=region), position = ""dodge"")+"
+"0","  scale_fill_brewer(palette = ""PuOr"")+"
+"0","  labs(title=""Number of weather stations by elevation category and region"", "
+"0","       x=""Elevation Category"", y= ""Count"")+"
+"0","  theme_bw()"

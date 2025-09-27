@@ -1,0 +1,7 @@
+"0","cor(circle_data$x, circle_data$y)"
+"1","[1]"
+"1"," -0.06834336"
+"1","
+"
+"0","# circle_data |>"
+"0","#   summarize(r = cor(x, y))"

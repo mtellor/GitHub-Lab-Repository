@@ -1,0 +1,6 @@
+"0",""
+"0","met_avg %>%"
+"0","filter(!(region %in% NA)) %>% "
+"0","  ggplot(mapping=aes(x=region, y=wind.sp)) +"
+"0","  stat_summary(fun.data=""mean_sdl"", geom=""errorbar"") + "
+"0","  stat_summary(fun.data=""mean_sdl"")"

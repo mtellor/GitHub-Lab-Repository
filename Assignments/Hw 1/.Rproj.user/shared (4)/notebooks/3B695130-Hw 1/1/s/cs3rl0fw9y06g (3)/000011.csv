@@ -1,0 +1,9 @@
+"0","# Rename latitude and longitude"
+"0","combined_data <- combined_data |>"
+"0","  rename(Lat = Site.Latitude,"
+"0","         Lon = Site.Longitude)"
+"1","[1m[33mError[39m in `rename()`:[22m
+[33m![39m Can't rename columns that don't exist.
+[31m✖[39m Column `Site.Latitude` doesn't exist.
+[90mRun `]8;;x-r-run:rlang::last_trace()rlang::last_trace()]8;;` to see where the error occurred.[39m
+"

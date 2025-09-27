@@ -1,0 +1,12 @@
+"0","library(data.table)"
+"0","library(ggplot2)"
+"0","library(dplyr)"
+"0","library(tidyverse)"
+"0","library(leaflet)"
+"0",""
+"0","met <- read.csv(""~/Library/CloudStorage/GoogleDrive-tellorin@usc.edu/"
+"0","                .shortcut-targets-by-id/10yI1Vp2x44iBX7T-_NfWNeL7go8kwnUH/"
+"0","                2. College - USC/1. Degree/1. Courses/Y4 Senior/Fall 2025/"
+"0","                PM 566/Lab/GitHub-Lab-Repository/Lab 4/met_all.gz"")"
+"2","Error in file(file, ""rt"") : cannot open the connection
+"

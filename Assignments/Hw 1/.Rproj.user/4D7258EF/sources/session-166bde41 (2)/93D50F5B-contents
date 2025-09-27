@@ -1,0 +1,524 @@
+---
+title: "Homework 1"
+format: html
+editor: visual
+author: "Mark Tello-Rincon"
+theme: cerulean
+embed-resources: true
+---
+
+**Primary Question**: Have daily concentrations of PM~2.5~ decreased in California over the 20 years spanning from 2002 to 2022?
+
+------------------------------------------------------------------------
+
+### Load data
+
+```{r}
+data_2002 <- read.csv("~/Library/CloudStorage/GoogleDrive-tellorin@usc.edu/.shortcut-targets-by-id/10yI1Vp2x44iBX7T-_NfWNeL7go8kwnUH/2. College - USC/1. Degree/1. Courses/Y4 Senior/Fall 2025/PM 566/Assignments/Hw 1/data/2002.csv")
+
+data_2022 <- read.csv("~/Library/CloudStorage/GoogleDrive-tellorin@usc.edu/.shortcut-targets-by-id/10yI1Vp2x44iBX7T-_NfWNeL7go8kwnUH/2. College - USC/1. Degree/1. Courses/Y4 Senior/Fall 2025/PM 566/Assignments/Hw 1/data/2022.csv")
+
+library(ggplot2)
+library(dplyr)
+library(leaflet)
+library(ggridges)
+library(tidyr)
+```
+
+### Summary of Initial Findings
+
+**Dimensions**
+
+-   20**02**: 22 rows & 15976 columns
+-   20**22**: 22 rows & 59918 columns
+
+**Variables**
+
+-   Both the 20**02** and 20**22** datasets use the variable `Daily.Mean.PM2.5.Concentration` and it is a numeric variable.
+-   Other variables include `data`, `source`, `site.id`, and `county`.
+
+**Headers & Footers**
+
+-   By looking at the headers and footers for both datasets, it seems that the data has loaded properly and there are no errors.
+
+**Distribution**
+
+-   20**02**:
+    -   Min: 0, Max: 104.30, Median: 12.00, Mean: 16.12
+    -   The histogram appears to be positively skewed, with the majority of the daily mean PM~2.5~ being between 0 and 20.
+-   20**22**:
+    -   Min: -6.7, Max: 302.5, Median: 6.8, Mean: 8.414
+        -   *Given the negative minimum value, and high maximum value, there be some errors in the data not seen in the headers or footers.*
+    -   The histogram appears to be generally normally distributed, with very few outlier values.
+
+```{r}
+# Dimensions
+dim(data_2002)
+dim(data_2022)
+
+# Headers and footers
+head(data_2002)
+tail(data_2002)
+
+head(data_2022)
+tail(data_2022)
+
+# Variable names and types
+names(data_2002)
+str(data_2002)
+
+names(data_2022)
+str(data_2022)
+
+# Distribution of PM2.5
+summary(data_2002$Daily.Mean.PM2.5.Concentration)
+hist(data_2002$Daily.Mean.PM2.5.Concentration,
+     main = "PM2.5 Distribution - 2002",
+     xlab = "Daily Mean PM2.5",
+     col = "lightblue")
+
+summary(data_2022$Daily.Mean.PM2.5.Concentration)
+hist(data_2022$Daily.Mean.PM2.5.Concentration,
+     main = "PM2.5 Distribution - 2022",
+     xlab = "Daily Mean PM2.5",
+     col = "lightgreen")
+```
+
+### Basic Map of Monitoring Sites
+
+Based on the maps, it appears that the distribution remained relatively the same, however there were increases in PM~2.5~ measurements in the Central Valley and Bay Area from 20**02** to 20**22**.
+
+```{r}
+# Adding year column
+data_2002$Year <- 2002
+data_2022$Year <- 2022
+
+# Rename PM2.5 column
+names(data_2002)[names(data_2002) == "Daily.Mean.PM2.5.Concentration"] <- "PM25"
+names(data_2022)[names(data_2022) == "Daily.Mean.PM2.5.Concentration"] <- "PM25"
+
+# Combine datasets
+combined_data <- rbind(data_2002, data_2022)
+
+# Rename latitude and longitude
+combined_data <- combined_data |>
+  rename(Lat = Site.Latitude,
+         Lon = Site.Longitude)
+
+sites_2002 <- combined_data %>% filter(Year == 2002)
+sites_2022 <- combined_data %>% filter(Year == 2022)
+
+# Interactive map: 2002
+leaflet() %>%
+  addTiles() %>%
+  addCircleMarkers(data = sites_2002,
+                   ~Lon, ~Lat,
+                   color = "darkblue",
+                   radius = 3,
+                   label = ~paste("2002 Site:", Local.Site.Name),
+                   group = "2002")
+
+# Interactive map: 2022
+leaflet() %>%
+  addTiles() %>%
+  addCircleMarkers(data = sites_2022,
+                   ~Lon, ~Lat,
+                   color = "tomato",
+                   radius = 3,
+                   label = ~paste("2022 Site:", Local.Site.Name),
+                   group = "2022")
+```
+
+### Missing & Implausible Values
+
+Though there are no missing data, there are some values which seem implausible. Specifically, values indicating a negative PM~2.5~ level are implausible, and of which there are 215 values in the combined dataset. When checking the proportion of negative values by year, there were 0 reported in 20**02**, with all 215 negative observations having been reported in 20**22**.
+
+-   20**02**
+    -   Missing values: 0
+    -   Implausible (negative) values: 0
+-   20**22**
+    -   Missing values: 0
+    -   Implausible (negative) values: 215
+        -   Looking at the histogram, the season with the most negative values is winter. Summer also saw an uptick of negative values being reported. There were few negative values reported in the spring and autumn.
+
+```{r}
+# Missing values
+sum(is.na(combined_data$PM25))
+
+# Negative values (not possible for PM2.5)
+sum(combined_data$PM25 < 0)
+
+# Very high values (above 1000 µg/m³)
+sum(combined_data$PM25 > 1000)
+
+# Missing values by year
+tapply(is.na(combined_data$PM25), combined_data$Year, sum)
+
+# Negative values by year
+tapply(combined_data$PM25 < 0, combined_data$Year, sum)
+
+# Very high values by year
+tapply(combined_data$PM25 > 1000, combined_data$Year, sum)
+
+# Total observations by year
+table(combined_data$Year)
+
+#Temporal changes
+## Filter negative values
+neg_2002 <- combined_data[combined_data$Year == 2002 & combined_data$PM25 < 0, ]
+neg_2022 <- combined_data[combined_data$Year == 2022 & combined_data$PM25 < 0, ]
+
+## Ensure Date is in Date format
+neg_2002$Date <- as.Date(neg_2002$Date)
+neg_2022$Date <- as.Date(neg_2022$Date)
+
+# Histogram for 2002 (no negative values, so chart is blank)
+ggplot(neg_2002, aes(x = Date)) +
+  geom_histogram(binwidth = 7, fill = "darkred", color = "white") +
+  labs(title = "Negative PM2.5 Values in 2002",
+       x = "Date", y = "Count") +
+  theme_minimal()
+```
+
+##### *The histogram for 2002 is blank to indicate there are no negative values. All negative values were reported in 2022.* 
+
+```{r}
+# Histogram for 2022
+ggplot(neg_2022, aes(x = Date)) +
+  geom_histogram(binwidth = 30, fill = "darkred", color = "white") +
+  labs(title = "Negative PM2.5 Values in 2022",
+       x = "Date", y = "Count") +
+  theme_minimal()
+```
+
+### Exploring Spatial Data at Three Levels
+
+**Primary Question**: Have daily concentrations of PM~2.5~ decreased in California over the 20 years spanning from 2002 to 2022?
+
+#### Level 1: State Trends
+
+-   Plots
+    -   Boxplot: PM~2.5~ Distribution in California: 2002 vs. 2022
+        -   The median and IQR of daily PM~2.5~ levels are similar across both years, but 2022 shows a higher number of extreme outliers, with some values exceeding 200. This suggests that while typical air quality remained stable, 2022 experienced more severe pollution spikes.
+    -   Line plot: Monthly PM~2.5~ in California: 2002 vs. 2022
+        -   Mean PM~2.5~ levels in 2002 were consistently higher, with peaks in spring and winter months. In contrast, 2022 shows a flatter, lower trend across all months, indicating better air quality, but still having some pollution spikes as noted in the box plot earlier.
+    -   Histogram: PM~2.5~ Frequency Distribution in California
+        -   Both years show a concentration of PM~2.5~ values at the lower end, but 2022 is more tightly clustered below 20 µg/m³. The broader spread in 2002 indicates more frequent moderate-to-high pollution days.
+    -   Barplot: Valid PM~2.5~ Observations by Year
+        -   The number of valid observations in 2022 is significantly higher than in 2002, possibly due to more frequent monitoring and improved data collection methods over time.
+-   Statistics
+    -   Basic summary
+        -   In 2002, the mean PM~2.5~ was 16.1 µg/m³ with a wider spread (SD = 13.9), while 2022 saw a substantial drop to 8.41 µg/m³ and a smaller distribution (SD = 7.64). Despite the improvements, 2022 had 215 negative values and a maximum reading of 302 µg/m³, which suggests there may be occasional mistakes in data collection or extreme pollution events.
+    -   Extreme values
+        -   2002 had more frequent moderate-to-high pollution days, with 1,512 readings above 35 µg/m³ and 435 above 55. In contrast, 2022 had fewer moderate events but more extreme spikes, with 37 days having exceeded 100 µg/m³, compared to just 2 in 2002.
+    -   Monthly averages
+        -   Monthly PM~2.5~ in 2002 ranged from 13.3 to 20.7 µg/m³, peaking in April and June. In 2022, levels were consistently lower across all months, averaging around 8 µg/m³. By glancing at the table, there is an apparent difference between 2002's all-double-digit PM~2.5~ values, versus 2022 with all-single-digit values.
+    -   Observation counts by year
+        -   The number of valid PM~2.5~ observations in California quadrupled from 15,976 in 2002 to 59,703 in 2022. This significant rise is likely due to more frequent monitoring as well as improved data reporting.
+
+##### Plots
+
+```{r}
+# California only
+ca_data <- combined_data
+
+#### Boxplot of PM2.5 by year ----
+ggplot(ca_data, aes(x = factor(Year), y = PM25)) +
+  geom_boxplot(fill = "lightblue") +
+  labs(title = "PM2.5 Distribution in California: 2002 vs. 2022",
+       x = "Year", y = "Daily PM2.5") +
+  theme_minimal()
+
+#### Line plot of monthly averages ----
+ca_data$Date <- as.Date(ca_data$Date)
+ca_data$Month <- factor(format(ca_data$Date, "%m"),
+                        levels = sprintf("%02d", 1:12),
+                        labels = month.abb)
+
+ggplot(ca_data, aes(x = Month, y = PM25, group = Year, color = factor(Year))) +
+  stat_summary(fun = mean, geom = "line", linewidth = 1) +
+  stat_summary(fun = mean, geom = "point", size = 2) +
+  labs(title = "Monthly PM2.5 in California: 2002 vs 2022",
+       x = "Month", y = "Mean PM2.5", color = "Year") +
+  theme_minimal()
+
+#### Histogram of PM2.5 Values ----
+ggplot(ca_data, aes(x = PM25, fill = factor(Year))) +
+  geom_histogram(binwidth = 2, alpha = 0.6, position = "identity") +
+  labs(title = "PM2.5 Histogram in California",
+       x = "Daily PM2.5", fill = "Year") +
+  theme_minimal()
+
+#### Obs count ----
+ca_data %>%
+  filter(PM25 >= 0) %>%
+  count(Year) %>%
+  ggplot(aes(x = factor(Year), y = n, fill = factor(Year))) +
+  geom_col() +
+  labs(title = "Valid PM2.5 Observations by Year",
+       x = "Year", y = "Count") +
+  theme_minimal()
+```
+
+##### Statistics
+
+```{r}
+#### Basic summary ----
+ca_data %>%
+  group_by(Year) %>%
+  summarize(
+    count = n(),
+    missing = sum(is.na(PM25)),
+    negative = sum(PM25 < 0, na.rm = TRUE),
+    mean = mean(PM25, na.rm = TRUE),
+    median = median(PM25, na.rm = TRUE),
+    sd = sd(PM25, na.rm = TRUE),
+    min = min(PM25, na.rm = TRUE),
+    max = max(PM25, na.rm = TRUE)
+  )
+
+#### Summary of extreme values ----
+ca_data %>%
+  filter(PM25 >= 0) %>%
+  group_by(Year) %>%
+  summarize(
+    above_35 = sum(PM25 > 35, na.rm = TRUE),
+    above_55 = sum(PM25 > 55, na.rm = TRUE),
+    above_100 = sum(PM25 > 100, na.rm = TRUE)
+  )
+
+#### Monthly avgs ----
+ca_data$Date <- as.Date(ca_data$Date)
+ca_data$Month <- factor(format(ca_data$Date, "%m"),
+                        levels = sprintf("%02d", 1:12),
+                        labels = month.abb)
+
+ca_data %>%
+  mutate(Date = as.Date(Date),
+         Month = factor(format(Date, "%m"),
+                        levels = sprintf("%02d", 1:12),
+                        labels = month.abb)) %>%
+  drop_na(PM25, Date) %>%
+  filter(PM25 >= 0) %>%
+  group_by(Year, Month) %>%
+  summarize(monthly_avg = mean(PM25), .groups = "drop") %>%
+  arrange(Year, Month) %>%
+  print(n = Inf)
+
+#### Obs counts by year
+ca_data %>%
+  filter(PM25 >= 0) %>%
+  count(Year)
+```
+
+#### Level 2: County Trends
+
+-   Plots
+    -   Faceted line plots: Monthly PM~2.5~ Trend by County: 2002 vs 2022
+        -   Most counties show a clear reduction in monthly PM~2.5~ levels from 2002 to 2022, with flatter and lower curves in 2022. Seasonal peaks in 2002, especially in spring and summer, are less significant or absent in 2022. This suggests improved air quality across all of California, generally.
+    -   Ridgeline plot: PM~2.5~ Distribution by County
+        -   Across nearly all counties, the 2022 distributions are smaller and shifted toward lower PM~2.5~ values compared to 2002. While some counties still show long tails or individual high values, the overall density indicates there has been a major reduction in pollution.
+    -   Barplot: Observation Counts by County
+        -   Observation counts increased substantially in 2022 across nearly every county, with Los Angeles leading both years, with all other Southern California counties close behind. As mentioned above, there were likely improvements in data collection frequency, but it appears that those improvements were moreso concentrated within Southern California.
+-   Statistics
+    -   Basic summary
+        -   Most counties experienced significant drops in mean PM~2.5~ levels from 2002 to 2022. Standard deviations (STDEV) generally declined, indicating fewer high-pollution days, though some counties like Trinity and Siskiyou had unusually high STDEV and maximum values in 2022.
+    -   Extreme values
+        -   The number of days exceeding moderate PM~2.5~ levels fell significantly in most counties by 2022, especially above 35 and 55 µg/m³. However, a few counties such as Placer, Mariposa, Trinity, and Siskiyou had multiple significant spikes above 100 µg/m³ in 2022, likely from uncommon pollution events.
+    -   Observation counts
+        -   Most counties had a significant increase in valid PM~2.5~ observations from 2002 to 2022, with some, like Los Angeles, Riverside, and Inyo, more than doubling their observations. This increase shows more geographic coverage, especially in areas/regions that seemed to have high levels of population. A few counties had no data in 2002 or 2022, indicating coverage gaps, which can lead to limitations in certain findings.
+
+##### Plots
+
+```{r}
+#### CA counties only
+county_data <- ca_data %>% filter(!is.na(County))
+
+#### Faceted line plot ----
+combined_data$Date <- as.Date(combined_data$Date)
+combined_data$Month <- as.numeric(format(combined_data$Date, "%m"))
+
+ggplot(combined_data, aes(x = Month, y = PM25, group = Year, color = factor(Year))) +
+  stat_summary(fun = mean, geom = "line") +
+  stat_summary(fun = mean, geom = "point") +
+  facet_wrap(~County) +
+  labs(title = "Monthly PM2.5 Trend by County: 2002 vs 2022",
+       x = "Month", y = "Mean PM2.5", color = "Year") +
+  theme_minimal() +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        text = element_text(size = 14),
+        legend.position = "bottom")
+
+#### Ridgeline plot by country and year ----
+combined_data %>%
+  filter(PM25 >= 0, !is.na(County)) %>%
+  ggplot(aes(x = PM25, y = County, fill = factor(Year))) +
+  geom_density_ridges(alpha = 0.6) +
+  labs(title = "PM2.5 Distribution by County",
+       x = "Daily PM2.5", y = "County", fill = "Year") +
+  theme_minimal()
+
+#### Observation counts ----
+combined_data %>%
+  filter(PM25 >= 0, !is.na(County)) %>%
+  count(County, Year) %>%
+  ggplot(aes(x = n, y = reorder(County, n), fill = factor(Year))) +
+  geom_col(position = "dodge") +
+  labs(title = "Observation Counts by County",
+       x = "Number of Observations", y = "County", fill = "Year") +
+  theme_minimal()
+```
+
+##### Statistics
+
+```{r}
+#### Basic by year ----
+combined_data %>%
+  filter(!is.na(PM25), PM25 >= 0, !is.na(County)) %>%
+  group_by(County, Year) %>%
+  summarise(
+    count = n(),
+    mean = mean(PM25),
+    median = median(PM25),
+    sd = sd(PM25),
+    min = min(PM25),
+    max = max(PM25),
+    .groups = "drop"
+  ) %>%
+  arrange(County, Year) %>%
+  print(n = Inf)
+
+#### Extreme values by county ----
+combined_data %>%
+  filter(!is.na(PM25), PM25 >= 0, !is.na(County)) %>%
+  group_by(County, Year) %>%
+  summarise(
+    above_35 = sum(PM25 > 35),
+    above_55 = sum(PM25 > 55),
+    above_100 = sum(PM25 > 100),
+    .groups = "drop"
+  ) %>%
+  arrange(County, Year) %>%
+  print(n = Inf)
+
+#### Obs count by county ----
+combined_data %>%
+  filter(!is.na(PM25), PM25 >= 0, !is.na(County)) %>%
+  count(County, Year) %>%
+  pivot_wider(names_from = Year, values_from = n) %>%
+  arrange(County) %>%
+  print(n = Inf)
+```
+
+#### Level 3: LA County Trends
+
+-   Plots
+    -   Boxplot: PM~2.5~ Distribution in LA County: 2002 vs 2022
+        -   PM~2.5~ levels in 2022 were lower and less variable than in 2002, with a smaller IQR and smaller range of extreme outliers. The drop in median PM~2.5~ suggests an improvement in air quality.
+    -   Line plot: Monthly Mean PM~2.5~ in LA County
+        -   Across all months, 2022 shows consistently lower PM~2.5~ levels compared to 2002, with 2002 have a consistently high levels, with it's highest peak at \~25 µg/m³ during the summer months. This indiciates reduced seasonal spikes (as seen in winter and summer in aforementioned plots) and improved air quality in LA County.
+    -   Time series: Daily PM~2.5~ in LA County
+        -   Daily PM~2.5~ in 2002 were significantly high, with frequent fluctuations and high peaks. In contrast, 2022 shows a flatter, more stable trend, with few significant spikes, indicating fewer adverse events that worsen pollution.
+    -   Barplot: Valid PM~2.5~ Observations in LA County
+        -   Observation counts more than doubled from 2002 to 2022, indicating improved monitoring and data collection methods.
+-   Statistics
+    -   Basic summary
+        -   Mean PM~2.5~ in LA County dropped from 20.8 µg/m³ in 2002 to 11.1 in 2022, with a smaller distribution and lower variability. The median also fell by over 8 µg/m³, indicating better improvements in air quality in the county.
+    -   Extreme values
+        -   The number of days exceeding PM~2.5~ values over 100 stayed at 0 for both 2002 and 2022. However, 2002 had 95 days above 35 µg/m³ and 17 above 55, while 2022 had just 9 and 1, respectively.
+    -   Monthly averages
+        -   Monthly PM~2.5~ levels were consistently higher in 2002, peaking near 25 µg/m³ in July. In 2022, monthly averages stayed between 9 and 13 µg/m³, showing fewer seasonal spikes and steadier air quality levels. The table also indicates, that, generally, as time passes, levels of PM~2.5~ decrease.
+    -   Observation counts
+        -   Valid observations nearly tripled from 744 in 2002 to 2,014 in 2022, indicating better monitoring and data collection methods for LA County.
+
+##### Plots
+
+```{r}
+#### LA County only
+la_sites <- ca_data %>% filter(County == "Los Angeles")
+
+la_data <- combined_data %>%
+  filter(County == "Los Angeles", PM25 >= 0, !is.na(Date))
+
+#### Boxplot of PM2.5 by Year ----
+ggplot(la_data, aes(x = factor(Year), y = PM25)) +
+  geom_boxplot(fill = "lightblue") +
+  labs(title = "PM2.5 Distribution in LA County: 2002 vs 2022",
+       x = "Year", y = "Daily PM2.5") +
+  theme_minimal()
+
+#### Monthly Trend Line ----
+la_data$Month <- factor(format(as.Date(la_data$Date), "%m"),
+                        levels = sprintf("%02d", 1:12),
+                        labels = month.abb)
+
+ggplot(la_data, aes(x = Month, y = PM25, group = Year, color = factor(Year))) +
+  stat_summary(fun = mean, geom = "line", linewidth = 1) +
+  stat_summary(fun = mean, geom = "point", size = 2) +
+  labs(title = "Monthly PM2.5 in LA County: 2002 vs 2022",
+       x = "Month", y = "Mean PM2.5", color = "Year") +
+  theme_minimal()
+
+
+#### Daily Time Series ----
+ggplot(la_data, aes(x = as.Date(Date), y = PM25, color = factor(Year))) +
+  geom_line(alpha = 0.4) +
+  labs(title = "Daily PM2.5 in LA County",
+       x = "Month (MM format)", y = "PM2.5", color = "Year") +
+  theme_minimal()
+
+#### Obs count ----
+la_data %>%
+  count(Year) %>%
+  ggplot(aes(x = factor(Year), y = n, fill = factor(Year))) +
+  geom_col() +
+  labs(title = "Valid PM2.5 Observations in LA County",
+       x = "Year", y = "Count") +
+  theme_minimal()
+```
+
+##### Statistics
+
+```{r}
+## Summary stats ----
+la_data <- combined_data %>%
+  filter(County == "Los Angeles", PM25 >= 0, !is.na(Date), !is.na(PM25))
+
+#### Basic summary ----
+la_data %>%
+  group_by(Year) %>%
+  summarise(
+    count = n(),
+    mean = mean(PM25),
+    median = median(PM25),
+    sd = sd(PM25),
+    min = min(PM25),
+    max = max(PM25),
+    .groups = "drop"
+  )
+
+#### Extreme value counts ----
+la_data %>%
+  group_by(Year) %>%
+  summarise(
+    above_35 = sum(PM25 > 35),
+    above_55 = sum(PM25 > 55),
+    above_100 = sum(PM25 > 100),
+    .groups = "drop"
+  )
+
+#### Monthly averages ----
+la_data %>%
+  mutate(Month = factor(format(as.Date(Date), "%m"),
+                        levels = sprintf("%02d", 1:12),
+                        labels = month.abb)) %>%
+  group_by(Year, Month) %>%
+  summarise(monthly_avg = mean(PM25), .groups = "drop") %>%
+  arrange(Year, Month) %>%
+  print(n = Inf)
+
+#### Obs counts ----
+la_data %>%
+  count(Year)
+```

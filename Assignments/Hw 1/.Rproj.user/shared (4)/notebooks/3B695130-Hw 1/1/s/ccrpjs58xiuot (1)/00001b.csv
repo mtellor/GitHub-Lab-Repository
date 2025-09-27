@@ -1,0 +1,7 @@
+"0",""
+"0","#### Histogram of PM2.5 Values ----"
+"0","ggplot(ca_data, aes(x = PM25, fill = factor(Year))) +"
+"0","  geom_histogram(binwidth = 2, alpha = 0.6, position = ""identity"") +"
+"0","  labs(title = ""PM2.5 Histogram in California"","
+"0","       x = ""Daily PM2.5"", fill = ""Year"") +"
+"0","  theme_minimal()"

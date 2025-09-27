@@ -1,0 +1,4 @@
+"0","# ggplot(datasaurus_dozen, aes(x = x, y = y, color = dataset))+"
+"0","#   geom_point()+"
+"0","#   facet_wrap(~ dataset, ncol = 3) +"
+"0","#   theme(legend.position = ""none"")"

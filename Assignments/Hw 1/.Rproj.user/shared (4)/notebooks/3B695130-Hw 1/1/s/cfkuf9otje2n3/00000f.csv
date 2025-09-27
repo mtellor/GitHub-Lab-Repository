@@ -1,0 +1,6 @@
+"0","# Histogram for 2022"
+"0","ggplot(neg_2022, aes(x = Date)) +"
+"0","  geom_histogram(binwidth = 30, fill = ""darkred"", color = ""white"") +"
+"0","  labs(title = ""Negative PM2.5 Values in 2022"","
+"0","       x = ""Date"", y = ""Count"") +"
+"0","  theme_minimal()"

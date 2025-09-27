@@ -1,0 +1,123 @@
+---
+title: "Lab 3"
+author: "Mark Tello-Rincon"
+format: html
+editor: visual
+embed-resources: true
+theme: cerulean
+---
+
+### 1 - Reading in the Data
+
+```{r}
+met <- read.csv("~/Library/CloudStorage/GoogleDrive-tellorin@usc.edu/.shortcut-targets-by-id/10yI1Vp2x44iBX7T-_NfWNeL7go8kwnUH/2. College - USC/1. Degree/1. Courses/Y4 Senior/Fall 2025/PM 566/Lab/Lab 3/data/met_all.gz")
+```
+
+### 2 - Dimensions, headers, footers
+
+There are 30 columns and 2,377,343 rows.
+
+```{r}
+dim(met)
+head(met)
+tail(met)
+```
+
+### 3 - Variables
+
+```{r}
+str(met)
+```
+
+### 4 - Key Variables
+
+```{r}
+table(met$year)
+table(met$day)
+table(met$hour)
+summary(met$temp)
+summary(met$elev)
+summary(met$wind.sp)
+```
+
+#### Fixing Missing Data
+
+The highest elevation of any weather station in this dataset is 4113 meters above mean sea level.[^1]
+
+[^1]: Units and measurement pulled from the dataset's data dictionary: `met-datadictionary.pdf`
+
+```{r}
+met$elev[met$elev==9999.0] <- NA
+summary(met$elev)
+
+met <- met[met$temp > -40, ]
+met2 <- met[order(met$temp), ]
+head(met2)
+```
+
+### 5 - Checking the data
+
+```{r}
+met <- met[met$temp>-15, ]
+met2 <- met[order(met$temp), ]
+head(met2)
+```
+
+### 6 - **Summary statistics**
+
+```{r}
+elev <- met[met$elev==max(met$elev, na.rm=TRUE), ]
+summary(elev)
+
+cor(elev$temp, elev$wind.sp, use="complete")
+cor(elev$temp, elev$hour, use="complete")
+cor(elev$wind.sp, elev$day, use="complete")
+cor(elev$wind.sp, elev$hour, use="complete")
+cor(elev$temp, elev$day, use="complete")
+```
+
+### 7 - Exploratory graphs
+
+```{r}
+hist(met$elev, breaks=100)
+hist(met$temp)
+hist(met$wind.sp)
+```
+
+#### Location of weather station with highest elevation
+
+```{r}
+library(leaflet)
+leaflet(elev) %>%
+  addProviderTiles('OpenStreetMap') %>% 
+  addCircles(lat=~lat,lng=~lon, opacity=1, fillOpacity=1, radius=100)
+```
+
+#### Time series of temperature and wind speed
+
+```{r}
+library(lubridate)
+elev$date <- with(elev, ymd_h(paste(year, month, day, hour, sep= ' ')))
+summary(elev$date)
+elev <- elev[order(elev$date), ]
+head(elev)
+
+plot(elev$date, elev$temp, type='l')
+plot(elev$date, elev$wind.sp, type='l')
+```
+
+### 8 - Asking questions
+
+**What does each quality control variable (e.g., temp.qc, wind.sp.qc) actually represent?**
+
+-   `wind.dir.qc` : indicates ISD's[^2] evaluation of the quality status of the wind direction
+-   `wind.sp.qc` : indicates ISD’s evaluation of the quality status of the wind gust/speed
+-   `temp.qc` : indicates ISD’s evaluation of the quality status of the hourly temperature average
+
+[^2]: ISD = Federal Climate Complex Data Documentation for Integrated Surface Data
+
+All quality control variable names used the same values for passing, failing, or missing the quality control checks:
+
+-   1 = passed
+-   3 = failed
+-   9 = missing

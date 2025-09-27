@@ -1,0 +1,184 @@
+install.packages("tidytuesdayR")
+tuesdata <- tidytuesdayR::tt_load('2025-08-26')
+billboard <- tuesdata$billboard
+topics <- tuesdata$topics
+artist_counts <- billboard %>%
+count(artist) %>%
+arrange(desc(n)) %>%
+slice_max(n, n = 10)  # Top 10 artists
+View(topics)
+View(billboard)
+### View Variables
+View(billboard)
+### View Variables
+names(billboard)
+avg_length <- billboard %>%
+group_by(date) %>%
+summarize(avg_length = mean(length_sec, na.rm = TRUE))
+library(tidyverse)
+library(lubridate)
+billboard <- billboard %>%
+mutate(year = year(ymd(date)))
+avg_length_by_year <- billboard %>%
+group_by(year) %>%
+summarize(avg_length_sec = mean(length_sec, na.rm = TRUE)) %>%
+arrange(year)
+ggplot(avg_length_by_year, aes(x = year, y = avg_length_sec)) +
+geom_line(color = "steelblue", size = 1.2) +
+geom_point(color = "darkred", size = 2) +
+labs(
+title = "Average Song Length Over Time",
+x = "Year",
+y = "Average Length (seconds)"
+) +
+theme_minimal()
+ggplot(avg_length_by_year, aes(x = year, y = avg_length_sec)) +
+geom_line(color = "steelblue", size = 1.2) +
+geom_point(color = "darkred", size = 2) +
+labs(
+title = "Average Song Length Over Time",
+x = "Year",
+y = "Average Length (seconds)"
+) +
+theme(
+plot.title = element_text(size = 16, face = "bold"),
+axis.text.x = element_text(angle = 45, hjust = 1),
+legend.position = "bottom"
+)
+ggplot(avg_length_by_year, aes(x = year, y = avg_length_sec)) +
+geom_line(color = "#000080", size = 1) +
+geom_point(color = "darkred", size = 1.5) +
+labs(
+title = "Average Song Length Over Time",
+x = "Year",
+y = "Average Length (seconds)"
+) +
+theme(
+plot.title = element_text(size = 16, face = "bold"),
+axis.text.x = element_text(angle = 45, hjust = 1),
+legend.position = "bottom"
+)
+ggplot(avg_length_by_year, aes(x = year, y = avg_length_sec)) +
+geom_line(color = "#123460", size = 1) +
+geom_point(color = "darkred", size = 1.75) +
+labs(
+title = "Average Song Length Over Time",
+x = "Year",
+y = "Average Length (seconds)"
+) +
+theme(
+plot.title = element_text(size = 16, face = "bold"),
+axis.text.x = element_text(angle = 45, hjust = 1),
+legend.position = "bottom"
+)
+ggplot(avg_length_by_year, aes(x = year, y = avg_length_sec)) +
+geom_line(color = "#4682B4", size = 1) +
+geom_point(color = "black", size = 1.75) +
+labs(
+title = "Average Song Length Over Time",
+x = "Year",
+y = "Average Length (seconds)"
+) +
+theme(
+plot.title = element_text(size = 16, face = "bold"),
+axis.text.x = element_text(angle = 45, hjust = 1),
+legend.position = "bottom"
+)
+ggplot(avg_length_by_year, aes(x = year, y = avg_length_sec)) +
+geom_line(color = "#4682B4", size = 1) +
+geom_point(color = "grey", size = 1.75) +
+labs(
+title = "Average Song Length Over Time",
+x = "Year",
+y = "Average Length (seconds)"
+) +
+theme(
+plot.title = element_text(size = 16, face = "bold"),
+axis.text.x = element_text(angle = 45, hjust = 1),
+legend.position = "bottom"
+)
+ggplot(avg_length_by_year, aes(x = year, y = avg_length_sec)) +
+geom_line(color = "#4682B4", size = 1) +
+geom_point(color = "grey", size = 1.75) +
+labs(
+title = "Average Song Length Over Time",
+x = "Year",
+y = "Average Length (seconds)"
+) +
+theme(minimal)
+ggplot(avg_length_by_year, aes(x = year, y = avg_length_sec)) +
+geom_line(color = "#4682B4", size = 1) +
+geom_point(color = "grey", size = 1.75) +
+labs(
+title = "Average Song Length Over Time",
+x = "Year",
+y = "Average Length (seconds)"
+) +
+theme(
+plot.title = element_text(size = 16, face = "bold"),
+axis.text.x = element_text(angle = 45, hjust = 2),
+legend.position = "bottom"
+)
+ggplot(avg_length_by_year, aes(x = year, y = avg_length_sec)) +
+geom_line(color = "#4682B4", size = 1) +
+geom_point(color = "black", size = 1.75) +
+labs(
+title = "Average Song Length Over Time",
+x = "Year",
+y = "Average Length (seconds)"
+) +
+theme(
+plot.title = element_text(size = 16, face = "bold"),
+axis.text.x = element_text(angle = 45, hjust = 1),
+legend.position = "bottom"
+)
+ggplot(avg_length_by_year, aes(x = year, y = avg_length_sec)) +
+geom_line(color = "#4682B4", size = 1) +
+geom_point(color = "black", size = 1.75) +
+labs(
+title = "Average Song Length Over Time",
+x = "Year",
+y = "Average Length (seconds)"
+) +
+theme_minimal()
+ggplot(avg_length_by_year, aes(x = year, y = avg_length_sec)) +
+geom_line(color = "#4682B4", size = 1) +
+geom_point(color = "black", size = 1.75) +
+labs(
+title = "Average Song Length Over Time",
+x = "Year",
+y = "Average Length (seconds)"
+) +
+theme(
+plot.title = element_text(size = 16, face = "bold"),
+axis.text.x = element_text(angle = 45, hjust = 1),
+legend.position = "bottom"
+)
+ggplot(avg_length_by_year, aes(x = year, y = avg_length_sec)) +
+geom_line(color = "#4682B4", size = 1) +
+geom_point(color = "black", size = 1.75) +
+labs(
+title = "Average Song Length Over Time",
+x = "Year",
+y = "Average Length (seconds)"
+) +
+theme_minimal()
+View(billboard)
+ggplot(avg_length_by_year, aes(x = year, y = avg_length_sec)) +
+geom_line(color = "#4682B4", size = 1) +
+geom_point(color = "black", size = 1.75) +
+labs(
+title = "Average Song Length Over Time (1958 - 2025)",
+x = "Year",
+y = "Average Length (seconds)"
+) +
+theme_minimal()
+ggplot(avg_length_by_year, aes(x = year, y = avg_length_sec)) +
+geom_line(color = "#4682B4", size = 1) +
+geom_point(color = "black", size = 1.75) +
+labs(
+title = "Average Song Length Over Time",
+x = "Year",
+y = "Average Length (seconds)"
+) +
+theme_minimal()

@@ -1,0 +1,92 @@
+## Reading in Data
+met <- read.csv("~/Desktop/met_all.gz")
+(met)
+head(met)
+tail(met)
+met <- read.csv("~/tellorin@usc.edu - Google Drive/My Drive/1. Fall 2025/PM 566/Lab/Lab 3/met_all.gz")
+## Reading in Data
+met <- read.csv("~/Home/tellorin@usc.edu - Google Drive/My Drive/1. Fall 2025/PM 566/Lab/Lab 3/met_all.gz")
+dim(met)
+head(met)
+## Reading in Data
+met <- read.csv("~/Library/CloudStorage/GoogleDrive-tellorin@usc.edu/.shortcut-targets-by-id/10yI1Vp2x44iBX7T-_NfWNeL7go8kwnUH/2. College - USC/1. Degree/1. Courses/Y4 Senior/Fall 2025/PM 566/Lab/Lab 3/data/met_all.gz")
+dim(met)
+head(met)
+tail(met)
+#  3) Variables
+str(met)
+?met
+?met
+?dim
+ncol(met)
+nrow(met)
+str(met)
+table(met$year)
+table(met$day)
+table(met$hour)
+summary(met$temp)
+summary(met$elev)
+summary(met$wind.sp)
+met[met$elev==9999.0] <- NA
+summary(met$elev)
+met[met$elev==9999.0] <- NA
+## Fixing Missing Data
+met[met$elev==9999] <- NA
+## Fixing Missing Data
+NA <- met[met$elev==9999.0]
+## Fixing Missing Data
+met[met$elev==9999.0] <- NA
+met[met$elev==9999.0] <- NA
+summary(met$elev)
+View(met)
+## Fixing Missing Data
+met[met$elev==9999.0] <- NA
+?df
+### Different Code
+met$elev[met$elev == 9999.0] <- NA
+summary(met$elev)
+View(met)
+met$elev[met$elev == 9999.0] <- NA
+summary(met$elev)
+met <- met[temp>-40]
+variable.names(met)
+met <- met[met$temp>-40]
+any(met$temp == -40)  # Should return FALSE
+met <- met[met$temp > -40, ]
+met2 <- met[order(met$temp), ]
+head(met2)
+any(met$temp == -40)  # Should return FALSE
+any(met$temp == -40)
+summary(met)
+met <- met[temp>-15]
+15]
+, ]
+5, ]
+met <- met[met$temp>-15, ]
+met2 <- met[order(met2$temp), ]
+head(met2)
+met <- met[met$temp>-15, ]
+met2 <- met[order(met$temp), ]
+head(met2)
+met <- met[met$temp>-15, ]
+met2 <- met[order(met$temp), ]
+head(met2)
+elev <- met[elev==max(elev), ]
+# Summary Statistics
+elev <- met[elev==max(met$elev), ]
+# Summary Statistics
+elev <- met[met$elev==max(met$elev), ]
+summary(elev)
+View(elev)
+elev <- met[elev==max(elev), ]
+View(elev)
+cor(elev$temp, elev$wind.sp, use="complete")
+# Summary Statistics
+elev <- met[elev==max(elev), ]
+variable.names(met)
+met <- read.csv("~/Library/CloudStorage/GoogleDrive-tellorin@usc.edu/.shortcut-targets-by-id/10yI1Vp2x44iBX7T-_NfWNeL7go8kwnUH/2. College - USC/1. Degree/1. Courses/Y4 Senior/Fall 2025/PM 566/Lab/Lab 3/data/met_all.gz")
+met <- read.csv("~/Library/CloudStorage/GoogleDrive-tellorin@usc.edu/.shortcut-targets-by-id/10yI1Vp2x44iBX7T-_NfWNeL7go8kwnUH/2. College - USC/1. Degree/1. Courses/Y4 Senior/Fall 2025/PM 566/Lab/Lab 3/data/met_all.gz")
+dim(met)
+head(met)
+tail(met)
+variable.names(met)

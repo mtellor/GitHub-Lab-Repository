@@ -1,0 +1,29 @@
+"0","# Combine datasets"
+"0","combined_data <- rbind(data_2002, data_2022)"
+"0",""
+"0","# Basic map"
+"0","library(maps)"
+"0","states_map <- map_data(""state"")"
+"0","ca_map <- subset(states_map, region == ""california"")"
+"0",""
+"0","# Plot"
+"0","ggplot() +"
+"0","  geom_polygon(data = ca_map, aes(x = long, y = lat, group = group), fill = ""gray95"", color = ""gray80"") +"
+"0","  geom_point(data = combined_data, aes(x = ~Lon, y = ~Lat, color = factor(Year)),"
+"0","             alpha = 0.6, size = 2) +"
+"0","  coord_quickmap(xlim = c(-125, -113), ylim = c(32, 42)) +"
+"0","  facet_wrap(~Year) +"
+"0","  labs(title = ""Monitoring Site Locations in California: 2002 vs 2022"","
+"0","       x = ""Longitude"", y = ""Latitude"", color = ""Year"") +"
+"0","  theme_minimal()"
+"1","[1m[33mError[39m in `geom_point()`:[22m
+[38;5;232m[33m![38;5;232m Problem while computing aesthetics.
+[36mℹ[38;5;232m Error occurred in the 2nd layer.[39m
+[1mCaused by error in `compute_aesthetics()`:[22m
+[38;5;232m[33m![38;5;232m Aesthetics are not valid data columns.
+[31m✖[38;5;232m The following aesthetics are invalid:
+[31m✖[38;5;232m `x = NULL`
+[31m✖[38;5;232m `y = NULL`
+[36mℹ[38;5;232m Did you mistype the name of a data column or forget to add `after_stat()`?[39m
+[90mRun `]8;;x-r-run:rlang::last_trace()rlang::last_trace()]8;;` to see where the error occurred.[39m
+"

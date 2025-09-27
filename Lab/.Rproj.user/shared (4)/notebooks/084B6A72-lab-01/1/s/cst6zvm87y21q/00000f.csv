@@ -1,0 +1,7 @@
+"0","cor(dino_data$x, dino_data$y)"
+"1","[1]"
+"1"," -0.06447185"
+"1","
+"
+"0","# dino_data |>"
+"0","#   summarize(r = cor(x, y))"

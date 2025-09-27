@@ -1,0 +1,139 @@
+---
+title: "Lab 1"
+author: "Mark Tello-Rincon"
+format: html
+editor: visual
+embed-resources: true
+theme: cerulean
+fig-width: 7
+fig-height: 7
+---
+
+```{r}
+library(datasauRus)
+```
+
+## Question 1
+
+```{r}
+?datasaurus_dozen
+```
+
+There are 1846 rows and 3 columns.
+
+The variables included in the data frame are:
+
+-   dataset
+-   x
+-   y
+
+## Question 2
+
+#### Subsetting
+
+```{r}
+dino_data <- datasaurus_dozen[datasaurus_dozen$dataset == 'dino', ]
+```
+
+#### Plotting
+
+```{r}
+plot(dino_data$x, dino_data$y)
+# ggplot(data = dino_data, mapping = aes(x = x, y = y)) +
+#   geom_point()
+```
+
+#### Correlation Coefficient
+
+```{r}
+cor(dino_data$x, dino_data$y)
+# dino_data |>
+#   summarize(r = cor(x, y))
+```
+
+## Question 3
+
+#### Subsetting
+
+```{r}
+star_data <- datasaurus_dozen[datasaurus_dozen$dataset == 'star', ]
+```
+
+#### Plotting
+
+```{r}
+plot(star_data$x, star_data$y)
+# ggplot(data = star_data, mapping = aes(x = x, y = y)) +
+#   geom_point()
+```
+
+#### Correlation Coefficient
+
+```{r}
+cor(star_data$x, star_data$y)
+# star_data |>
+#   summarize(r = cor(x, y))
+```
+
+The `dino_data` correlation coefficient is -0.06447185, while the `star_data` correlation coefficient is -0.0629611.
+
+## Question 4
+
+#### Subsetting
+
+```{r}
+circle_data <- datasaurus_dozen[datasaurus_dozen$dataset == 'circle', ]
+```
+
+#### Plotting
+
+```{r}
+plot(circle_data$x, circle_data$y)
+# ggplot(data = circle_data, mapping = aes(x = x, y = y)) +
+#   geom_point()
+```
+
+#### Correlation Coefficient
+
+```{r}
+cor(circle_data$x, circle_data$y)
+# circle_data |>
+#   summarize(r = cor(x, y))
+```
+
+The `dino_data` correlation coefficient is -0.06447185, while the `circle_data` correlation coefficient is -0.06834336.
+
+## Question 5
+
+```{r}
+#| fig-height: 15
+#| fig-width: 15
+layout(matrix(1:16, nrow=4, ncol=4))
+for(name in unique(datasaurus_dozen$dataset)){
+  subset <- datasaurus_dozen[datasaurus_dozen$dataset == name, ]
+  plot(subset$x, subset$y, main = name)
+}
+layout(1)
+```
+
+```{r}
+# ggplot(datasaurus_dozen, aes(x = x, y = y, color = dataset))+
+#   geom_point()+
+#   facet_wrap(~ dataset, ncol = 3) +
+#   theme(legend.position = "none")
+```
+
+## Question 6
+
+```{r}
+sapply(unique(datasaurus_dozen$dataset), function(name){
+    subset <- datasaurus_dozen[datasaurus_dozen$dataset == name, ]
+    return(cor(subset$x, subset$y))
+})
+```
+
+```{r}
+# datasaurus_dozen |>
+#   group_by(dataset) |>
+#   summarize(r = cor(x, y))
+```

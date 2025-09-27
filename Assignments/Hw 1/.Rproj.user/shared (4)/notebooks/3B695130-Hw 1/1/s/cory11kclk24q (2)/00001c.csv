@@ -1,0 +1,8 @@
+"0",""
+"0",""
+"0","#### Daily Time Series ----"
+"0","ggplot(la_data, aes(x = as.Date(Date), y = PM25, color = factor(Year))) +"
+"0","  geom_line(alpha = 0.4) +"
+"0","  labs(title = ""Daily PM2.5 in LA County"","
+"0","       x = ""Month (MM format)"", y = ""PM2.5"", color = ""Year"") +"
+"0","  theme_minimal()"

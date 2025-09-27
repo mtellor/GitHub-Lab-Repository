@@ -1,0 +1,2 @@
+[1,"==> quarto preview Lab 3.qmd --to html --no-watch-inputs --no-browse\n\n"]
+[1,"\u001B[31mError: The name of the input file cannot contain the special shell characters: [ <>()|\\:&;#?*'] (attempted to copy to a version without those characters 'Lab-3.rmarkdown' however that file already exists)\n\u001B[39m\u001B[31mExecution halted\n\u001B[39m"]

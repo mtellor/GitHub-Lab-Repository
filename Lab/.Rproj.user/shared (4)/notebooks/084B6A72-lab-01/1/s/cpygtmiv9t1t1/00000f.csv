@@ -1,0 +1,1 @@
+"0","star_data <- datasaurus_dozen[datasaurus_dozen$dataset == 'star', ]"

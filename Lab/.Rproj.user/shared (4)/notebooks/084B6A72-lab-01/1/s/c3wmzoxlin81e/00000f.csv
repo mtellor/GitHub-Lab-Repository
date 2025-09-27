@@ -1,0 +1,7 @@
+"0","cor(star_data$x, star_data$y)"
+"1","[1]"
+"1"," -0.0629611"
+"1","
+"
+"0","# star_data |>"
+"0","#   summarize(r = cor(x, y))"

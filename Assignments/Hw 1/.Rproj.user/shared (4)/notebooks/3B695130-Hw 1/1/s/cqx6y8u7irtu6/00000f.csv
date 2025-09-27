@@ -1,0 +1,4 @@
+"0","# Filter for California counties only"
+"0","county_data <- ca_data %>% filter(!is.na(County))"
+"0",""
+"0","# Plot of PM2.5 "

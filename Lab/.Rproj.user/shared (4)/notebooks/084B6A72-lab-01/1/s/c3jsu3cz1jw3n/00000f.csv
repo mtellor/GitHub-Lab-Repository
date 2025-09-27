@@ -1,0 +1,3 @@
+"0","# datasaurus_dozen |>"
+"0","#   group_by(dataset) |>"
+"0","#   summarize(r = cor(x, y))"

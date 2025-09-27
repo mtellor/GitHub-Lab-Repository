@@ -1,0 +1,168 @@
+1 + 1
+#| echo: false
+2 * 2
+1+1
+library(datasauRus)
+library(datasauRus)
+library(datasauRus)
+library(datasauRus)
+datasaurus_dozen
+datasaurus_dozen
+?datasaurus_dozen
+library(datasauRus)
+datasaurus_dozen
+table(datasaurus_dozen$dataset)
+summary(datasaurus_dozen$dataset)
+View(datasaurus_dozen)
+dino_data <- datasaurus_dozen[datasaurus_dozen$dataset == 'dino', ]
+View(dino_data)
+plot(dino_data$x, dino_data$y)
+# ggplot(data = dino_data, mapping = aes(x = x, y = y)) +
+#   geom_point()
+cor(dino_data$x, dino_data$y)
+# dino_data |>
+#   summarize(r = cor(x, y))
+install.packages("datasauRus")
+install.packages("datasauRus")
+library(datasauRus)
+library(datasauRus)
+?datasaurus_dozen
+dino_data <- datasaurus_dozen[datasaurus_dozen$dataset == 'dino', ]
+plot(dino_data$x, dino_data$y)
+# ggplot(data = dino_data, mapping = aes(x = x, y = y)) +
+#   geom_point()
+install.packages(datasauRus)
+install.packages("datasauRus")
+install.packages("datasauRus")
+install.packages("datasauRus")
+install.packages("datasauRus")
+library(datasauRus)
+dino_data <- datasaurus_dozen[datasaurus_dozen$dataset == 'dino', ]
+plot(dino_data$x, dino_data$y)
+# ggplot(data = dino_data, mapping = aes(x = x, y = y)) +
+#   geom_point()
+install.packages("datasauRus")
+install.packages("datasauRus")
+install.packages("datasauRus")
+install.packages("datasauRus")
+cor(dino_data$x, dino_data$y)
+# dino_data |>
+#   summarize(r = cor(x, y))
+dino_data <- datasaurus_dozen[datasaurus_dozen$dataset == 'star', ]
+View(dino_data)
+star_data <- datasaurus_dozen[datasaurus_dozen$dataset == 'star', ]
+View(dino_data)
+View(star_data)
+dino_data <- datasaurus_dozen[datasaurus_dozen$dataset == 'dino', ]
+View(dino_data)
+View(star_data)
+plot(dino_star$x, dino_star$y)
+plot(star_data$x, star_data$y)
+# ggplot(data = star_data, mapping = aes(x = x, y = y)) +
+#   geom_point()
+cor(star_data$x, star_data$y)
+# star_data |>
+#   summarize(r = cor(x, y))
+circle_data <- datasaurus_dozen[datasaurus_dozen$dataset == 'circle', ]
+plot(circle_data$x, circle_data$y)
+# ggplot(data = circle_data, mapping = aes(x = x, y = y)) +
+#   geom_point()
+cor(circle_data$x, circle_data$y)
+# circle_data |>
+#   summarize(r = cor(x, y))
+layout(matrix(1:16, nrow=4, ncol=4))
+for(name in unique(datasaurus_dozen$dataset)){
+subset <- datasaurus_dozen[datasaurus_dozen$dataset == name, ]
+plot(subset$x, subset$y, main = name)
+}
+layout(matrix(1:16, nrow=4, ncol=4))
+for(name in unique(datasaurus_dozen$dataset)){
+subset <- datasaurus_dozen[datasaurus_dozen$dataset == name, ]
+plot(subset$x, subset$y, main = name)
+}
+# ggplot(datasaurus_dozen, aes(x = x, y = y, color = dataset))+
+#   geom_point()+
+#   facet_wrap(~ dataset, ncol = 3) +
+#   theme(legend.position = "none")
+layout(matrix(1:16, nrow=4, ncol=4))
+for(name in unique(datasaurus_dozen$dataset)){
+subset <- datasaurus_dozen[datasaurus_dozen$dataset == name, ]
+plot(subset$x, subset$y, main = name)
+}
+layout(matrix(1:16, nrow=4, ncol=4))
+for(name in unique(datasaurus_dozen$dataset)){
+subset <- datasaurus_dozen[datasaurus_dozen$dataset == name, ]
+plot(subset$x, subset$y, main = name)
+}
+layout(matrix(1:16, nrow=4, ncol=4))
+for(name in unique(datasaurus_dozen$dataset)){
+subset <- datasaurus_dozen[datasaurus_dozen$dataset == name, ]
+plot(subset$x, subset$y, main = name)
+}
+#| fig-height: 10
+#| fig-width: 10
+layout(matrix(1:16, nrow=4, ncol=4))
+for(name in unique(datasaurus_dozen$dataset)){
+subset <- datasaurus_dozen[datasaurus_dozen$dataset == name, ]
+plot(subset$x, subset$y, main = name)
+}
+layout(1)
+#| fig-height: 15
+#| fig-width: 10
+layout(matrix(1:16, nrow=4, ncol=4))
+for(name in unique(datasaurus_dozen$dataset)){
+subset <- datasaurus_dozen[datasaurus_dozen$dataset == name, ]
+plot(subset$x, subset$y, main = name)
+}
+layout(1)
+#| fig-height: 10
+#| fig-width: 10
+layout(matrix(1:16, nrow=4, ncol=4))
+for(name in unique(datasaurus_dozen$dataset)){
+subset <- datasaurus_dozen[datasaurus_dozen$dataset == name, ]
+plot(subset$x, subset$y, main = name)
+}
+layout(1)
+#| fig-height: 20
+#| fig-width: 20
+layout(matrix(1:16, nrow=4, ncol=4))
+for(name in unique(datasaurus_dozen$dataset)){
+subset <- datasaurus_dozen[datasaurus_dozen$dataset == name, ]
+plot(subset$x, subset$y, main = name)
+}
+layout(1)
+layout(1)
+layout(1)
+#| fig-height: 15
+#| fig-width: 15
+layout(matrix(1:16, nrow=4, ncol=4))
+for(name in unique(datasaurus_dozen$dataset)){
+subset <- datasaurus_dozen[datasaurus_dozen$dataset == name, ]
+plot(subset$x, subset$y, main = name)
+}
+layout(1)
+# ggplot(datasaurus_dozen, aes(x = x, y = y, color = dataset))+
+#   geom_point()+
+#   facet_wrap(~ dataset, ncol = 3) +
+#   theme(legend.position = "none")
+#| fig-height: 15
+#| fig-width: 15
+layout(matrix(1:16, nrow=4, ncol=4))
+for(name in unique(datasaurus_dozen$dataset)){
+subset <- datasaurus_dozen[datasaurus_dozen$dataset == name, ]
+plot(subset$x, subset$y, main = name)
+}
+layout(1)
+sapply(unique(datasaurus_dozen$dataset), function(name){
+subset <- datasaurus_dozen[datasaurus_dozen$dataset == name, ]
+return(cor(subset$x, subset$y))
+})
+# datasaurus_dozen |>
+#   group_by(dataset) |>
+#   summarize(r = cor(x, y))
+sapply(unique(datasaurus_dozen$dataset), function(name){
+subset <- datasaurus_dozen[datasaurus_dozen$dataset == name, ]
+return(cor(subset$x, subset$y))
+})
+install.packages(prettydoc)
+install.packages("prettydoc")

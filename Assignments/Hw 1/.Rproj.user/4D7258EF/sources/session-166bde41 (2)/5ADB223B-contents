@@ -1,0 +1,196 @@
+##### All things loaded
+
+# Load datasets
+data_2002 <- read.csv("~/Library/CloudStorage/GoogleDrive-tellorin@usc.edu/.shortcut-targets-by-id/10yI1Vp2x44iBX7T-_NfWNeL7go8kwnUH/2. College - USC/1. Degree/1. Courses/Y4 Senior/Fall 2025/PM 566/Assignments/Hw 1/data/2002.csv")
+data_2022 <- read.csv("~/Library/CloudStorage/GoogleDrive-tellorin@usc.edu/.shortcut-targets-by-id/10yI1Vp2x44iBX7T-_NfWNeL7go8kwnUH/2. College - USC/1. Degree/1. Courses/Y4 Senior/Fall 2025/PM 566/Assignments/Hw 1/data/2022.csv")
+
+# Add Year column
+data_2002$Year <- 2002
+data_2022$Year <- 2022
+
+# Rename PM2.5 column for simplicity
+names(data_2002)[names(data_2002) == "Daily.Mean.PM2.5.Concentration"] <- "PM25"
+names(data_2022)[names(data_2022) == "Daily.Mean.PM2.5.Concentration"] <- "PM25"
+
+# Combine datasets
+combined_data <- rbind(data_2002, data_2022)
+
+# Load required libraries
+library(ggplot2)
+library(dplyr)
+
+# Rename latitude and longitude
+combined_data <- combined_data |>
+  rename(Lat = Site.Latitude,
+         Lon = Site.Longitude)
+
+# Interactive map
+library(leaflet)
+library(dplyr)
+
+sites_2002 <- combined_data %>% filter(Year == 2002)
+sites_2022 <- combined_data %>% filter(Year == 2022)
+
+## Temporal obs
+# Find rows w/ neg values
+neg_2022 <- combined_data[combined_data$Year == 2022 & combined_data$PM25 < 0, ]
+
+
+
+-------
+##### Step 1
+
+# Load datasets
+
+data_2002 <- read.csv("~/Library/CloudStorage/GoogleDrive-tellorin@usc.edu/.shortcut-targets-by-id/10yI1Vp2x44iBX7T-_NfWNeL7go8kwnUH/2. College - USC/1. Degree/1. Courses/Y4 Senior/Fall 2025/PM 566/Assignments/Hw 1/data/2002.csv")
+data_2022 <- read.csv("~/Library/CloudStorage/GoogleDrive-tellorin@usc.edu/.shortcut-targets-by-id/10yI1Vp2x44iBX7T-_NfWNeL7go8kwnUH/2. College - USC/1. Degree/1. Courses/Y4 Senior/Fall 2025/PM 566/Assignments/Hw 1/data/2022.csv")
+
+# Dimensions
+dim(data_2002)
+dim(data_2022)
+
+# Headers and footers
+head(data_2002)
+tail(data_2002)
+
+head(data_2022)
+tail(data_2022)
+
+# Variable names and types
+names(data_2002)
+str(data_2002)
+
+names(data_2022)
+str(data_2022)
+
+# Distribution of PM2.5
+summary(data_2002$Daily.Mean.PM2.5.Concentration)
+hist(data_2002$Daily.Mean.PM2.5.Concentration,
+     main = "PM2.5 Distribution - 2002",
+     xlab = "Daily Mean PM2.5",
+     col = "lightblue")
+
+summary(data_2022$Daily.Mean.PM2.5.Concentration)
+hist(data_2022$Daily.Mean.PM2.5.Concentration,
+     main = "PM2.5 Distribution - 2022",
+     xlab = "Daily Mean PM2.5",
+     col = "lightgreen")
+
+-------
+##### Step 2
+
+# Add Year column
+data_2002$Year <- 2002
+data_2022$Year <- 2022
+
+# Rename PM2.5 column for simplicity
+names(data_2002)[names(data_2002) == "Daily.Mean.PM2.5.Concentration"] <- "PM25"
+names(data_2022)[names(data_2022) == "Daily.Mean.PM2.5.Concentration"] <- "PM25"
+
+# Combine datasets
+combined_data <- rbind(data_2002, data_2022)
+
+# Confirm structure
+str(combined_data)
+
+# Preview combined data
+head(combined_data)
+tail(combined_data)
+
+# Summary of PM2.5 by year
+summary(combined_data$PM25)
+
+-------
+##### Step 3
+
+# Load required libraries
+library(ggplot2)
+library(dplyr)
+
+# Rename latitude and longitude
+combined_data <- combined_data |>
+  rename(Lat = Site.Latitude,
+         Lon = Site.Longitude)
+
+# Basic map of monitoring sites
+ggplot(combined_data, aes(x = Lon, y = Lat, color = factor(Year))) +
+  geom_point(alpha = 0.6, size = 2) +
+  labs(title = "Monitoring Site Locations: 2002 vs 2022",
+       x = "Longitude", y = "Latitude", color = "Year") +
+  theme_minimal()
+
+# Plot with facet_wrap
+ggplot(combined_data, aes(x = Lon, y = Lat)) +
+  borders("state", regions = "california", colour = "gray80", fill = "gray95") +
+  geom_point(aes(color = factor(Year)), alpha = 0.6, size = 2) +
+  coord_quickmap(xlim = c(-125, -113), ylim = c(32, 42)) +
+  facet_wrap(~Year) +
+  labs(title = "Monitoring Site Locations in California: 2002 vs 2022",
+       x = "Longitude", y = "Latitude", color = "Year") +
+  theme_minimal()
+
+# Interactive map
+library(leaflet)
+library(dplyr)
+
+sites_2002 <- combined_data %>% filter(Year == 2002)
+sites_2022 <- combined_data %>% filter(Year == 2022)
+
+leaflet() %>%
+  addTiles() %>%
+  addCircleMarkers(data = sites_2002,
+                   ~Lon, ~Lat,
+                   color = "blue",
+                   radius = 3,
+                   label = ~paste("2002 Site:", Local.Site.Name),
+                   group = "2002") %>%
+  addCircleMarkers(data = sites_2022,
+                   ~Lon, ~Lat,
+                   color = "red",
+                   radius = 3,
+                   label = ~paste("2022 Site:", Local.Site.Name),
+                   group = "2022") %>%
+  addLayersControl(overlayGroups = c("2002", "2022"),
+                   options = layersControlOptions(collapsed = FALSE))
+
+--------
+##### Step 4
+
+# Missing values
+sum(is.na(combined_data$PM25))
+
+# Negative values (not possible for PM2.5)
+sum(combined_data$PM25 < 0)
+
+# Very high values (above 1000 µg/m³)
+sum(combined_data$PM25 > 1000)
+
+# Missing values by year
+tapply(is.na(combined_data$PM25), combined_data$Year, sum)
+
+# Negative values by year
+tapply(combined_data$PM25 < 0, combined_data$Year, sum)
+
+# Very high values by year
+tapply(combined_data$PM25 > 1000, combined_data$Year, sum)
+
+# Total observations by year
+table(combined_data$Year)
+
+## Temporal obs
+# Find rows w/ neg values
+neg_2022 <- combined_data[combined_data$Year == 2022 & combined_data$PM25 < 0, ]
+
+# Show the dates
+neg_2022$Date
+
+# Count negative values by date
+neg_counts <- table(neg_2022$Date)
+
+## Plot
+
+
+
+
+
+

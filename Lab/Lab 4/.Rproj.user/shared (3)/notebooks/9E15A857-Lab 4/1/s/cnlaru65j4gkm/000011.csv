@@ -1,0 +1,6 @@
+"0",""
+"0","met_avg %>%"
+"0","  filter(!(dew.point %in% NA)) %>%"
+"0","  ggplot()+"
+"0","  geom_boxplot(mapping = aes(y=rh, fill=region)) +"
+"0","  facet_wrap(~region, nrow=2)"

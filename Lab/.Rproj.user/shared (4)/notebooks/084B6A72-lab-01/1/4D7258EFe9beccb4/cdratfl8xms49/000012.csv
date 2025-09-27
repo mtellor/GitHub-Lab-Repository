@@ -1,0 +1,7 @@
+"0","layout(matrix(1:16, nrow=4, ncol=4))"
+"0","for(name in unique(datasaurus_dozen$dataset)){"
+"0","  subset <- datasaurus_dozen[datasaurus_dozen$dataset == name, ]"
+"0","  plot(subset$x, subset$y, main = name)"
+"0","}"
+"2","Error in plot.new() : figure margins too large
+"

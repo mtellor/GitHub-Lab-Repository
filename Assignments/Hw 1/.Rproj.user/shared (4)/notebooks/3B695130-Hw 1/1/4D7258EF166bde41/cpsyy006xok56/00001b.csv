@@ -1,0 +1,18 @@
+"0","ggplot() +
+  geom_polygon(data = ca_map, aes(x = long, y = lat, group = group),
+               fill = ""gray95"", color = ""gray80"") +
+  geom_point(data = combined_data, aes(x = Lon, y = Lat, color = factor(Year)),
+             alpha = 0.6, size = 2) +
+  coord_quickmap(xlim = c(-125, -113), ylim = c(32, 42)) +
+  facet_wrap(~Year) +
+  labs(title = ""Monitoring Site Locations in California: 2002 vs 2022"",
+       x = ""Longitude"", y = ""Latitude"", color = ""Year"") +
+  theme_minimal()
+"
+"1","[1m[33mError[39m in `geom_point()`:[22m
+[38;5;232m[33m![38;5;232m Problem while computing aesthetics.
+[36mℹ[38;5;232m Error occurred in the 2nd layer.[39m
+[1mCaused by error:[22m
+[33m![39m object 'Lon' not found
+[90mRun `]8;;x-r-run:rlang::last_trace()rlang::last_trace()]8;;` to see where the error occurred.[39m
+"
