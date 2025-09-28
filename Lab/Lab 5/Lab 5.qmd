@@ -1,4 +1,15 @@
-# Setup ----
+---
+title: "Lab 5"
+author: "Mark Tello-Rincon"
+format: html
+editor: visual
+embed-resources: true
+theme: cerulean
+---
+
+#### Setup
+
+```{r}
 ## Load packages ----
 library(data.table)
 library(dtplyr)
@@ -7,10 +18,7 @@ library(leaflet)
 
 ## Load data ----
 ### met data ----
-met <- read.csv("~/Library/CloudStorage/GoogleDrive-tellorin@usc.edu/
-                .shortcut-targets-by-id/10yI1Vp2x44iBX7T-_NfWNeL7go8kwnUH/
-                2. College - USC/1. Degree/1. Courses/Y4 Senior/Fall 2025/
-                PM 566/PM566-Repository/Lab/Lab 3/data/met_all.gz")
+met <- read.csv("~/Library/CloudStorage/GoogleDrive-tellorin@usc.edu/.shortcut-targets-by-id/10yI1Vp2x44iBX7T-_NfWNeL7go8kwnUH/2. College - USC/1. Degree/1. Courses/Y4 Senior/Fall 2025/PM 566/PM566-Repository/Lab/Lab 3/data/met_all.gz")
 
 met <- met[met$temp >-17 | is.na(met$temp), ]
 met$elev[met$elev == 9999.0] <- NA
@@ -43,9 +51,17 @@ stations <- stations[!is.na(stations$USAF), ]
 
 ## Removing duplicates ----
 stations <- stations[!duplicated(stations$USAF), ]
+```
 
+### Question 1
 
-# Question 1 ----
+-   Station with median temperature: 724280.
+-   Station with median wind speed: 720377
+-   Station with median atm. pressure: 722197
+
+**No, these three do not coincide.**
+
+```{r}
 temp_median <- quantile(met_avg$temp, 0.5, na.rm=TRUE)
 wind_median <- quantile(met_avg$wind.sp, 0.5, na.rm=TRUE)
 atm_median <- quantile(met_avg$atm.press, 0.5, na.rm=TRUE)
@@ -53,14 +69,19 @@ temp_station <- met_avg$USAFID[which.min(abs(met_avg$temp-temp_median))]
 wind_station <- met_avg$USAFID[which.min(abs(met_avg$wind.sp-wind_median))]
 atm_station <- met_avg$USAFID[which.min(abs(met_avg$atm.press-atm_median))]
 c(temp_station, wind_station, atm_station)
+```
 
-# Question 2 ----
+### Question 2
+
+```{r}
 met_stations <- merge(met_avg, stations, by.x = "USAFID", by.y = "USAF")
-state_medians <- aggregate(cbind(lat,lon) ~ STATE, data = met_stations, FUN =
-                             median, na.rm = TRUE)
+state_medians <- aggregate(cbind(lat,lon) ~ STATE, data = met_stations, FUN = median, na.rm = TRUE)
 state_medians
+```
 
-# Question 3 ----
+### Question 3
+
+```{r}
 state_means <- aggregate(cbind(lat,lon) ~ STATE, data = met_stations, FUN = mean,
                          na.rm = TRUE)
 closest_stations <- merge(met_stations, state_means, by = "STATE", suffixes = c("",
@@ -77,8 +98,11 @@ Stations", popup = ~STATE) %>%
   addCircleMarkers(data = closest_by_state, ~lon, ~lat, color = "red", group =
                      "Closest to Mean", popup = ~STATE) %>%
   addLayersControl(overlayGroups = c("Median Stations", "Closest to Mean"))
+```
 
-# Question 4 ----
+### Question 4
+
+```{r}
 state_temps <- aggregate(temp ~ STATE, data = met_stations, FUN = mean, na.rm = TRUE)
 state_temps$temp_cat <- ifelse(state_temps$temp < 20, "low",
                                ifelse(state_temps$temp <25,
@@ -110,5 +134,4 @@ final_summary <- data.frame(
   mean_atm.press = mean_stats$atm.press
 )
 print(final_summary)
-
-
+```
