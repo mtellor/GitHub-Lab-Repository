@@ -1,0 +1,260 @@
+---
+title: "Lab 6"
+author: "Mark Tello-Rincon"
+format: html
+editor: visual
+embed-resources: true
+theme: cerulean
+---
+
+### Set-up
+
+```{r}
+library(tidytext)
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+
+
+mt_samples <- read_csv("https://raw.githubusercontent.com/USCbiostats/data-science-data/master/00_mtsamples/mtsamples.csv")
+mt_samples <- mt_samples |>
+  select(description, medical_specialty, transcription)
+
+head(mt_samples)
+```
+
+### Question 1
+
+How many different categories do we have in the data. Are these categories related? Overlapping? Evenly distributed?
+
+-   There are 40 categories in the dataset.
+-   Few categories are related and appear to be mostly general documentation, i.e., nursing reports, including:
+    -   `Consult - History and Phy.`
+    -   `SOAP / Chart / Progress Notes`
+    -   `Discharge Summary`
+    -   `Emergency Room Reports`
+    -   `Office Notes`
+    -   `Letters`
+    -   `IME-QME-Work Comp etc.`
+    -   `Diets and Nutritions`
+-   This dataset is not evenly distributed as `Surgery` has the most medical transcriptions, with 1103, with the second most being `Consult - History and Phy.` with 516, and `Cardiovascular/Pulmonary` with 372.
+
+```{r}
+mt_samples %>%
+  count(medical_specialty, sort = TRUE) %>%
+  print(n = 40)
+```
+
+### Question 2
+
+Explain what we see from this result. Does it makes sense? What insights (if any) do we get?
+
+-   Almost all top 20 words are considered function or stop words (i.e., articles, prepositions, pronouns, verbs, conjunctions) since they are primarily used to structure sentences.
+-   Others, such as `patient` and `right` are nouns/adjectives.
+-   This does make sense, since most of medical transcription is mostly made up of function words to describe things that are occurring, or where things are, ex., the patient, medications, IV placements, procedures, diagnostics, vitals, symptoms, etc.
+
+```{r}
+mt_samples %>% 
+  unnest_tokens(word,transcription) %>% 
+  count(word,sort=TRUE) %>% 
+  top_n(20,n) %>% 
+  ggplot(aes(x=reorder(word,n),y=n))+
+  geom_col()+
+  coord_flip()+
+  labs(x="Word",y="Count",title="Top 20 Most Frequent Words")
+```
+
+### Question 3
+
+What do we see know that we have removed stop words? Does it give us a better idea of what the text is about?
+
+-   Without stop words (or numbers), it can be seen that most words are medical terms, directional terms, verbs, measurements, and descriptors.
+-   This gives a clearer picture that this dataset is about medical transcription, especially considering the heavy use of medical and directional terms, as well as measurements.
+
+```{r}
+mt_samples %>%
+  unnest_tokens(word, transcription) %>%
+  anti_join(stop_words %>% filter(!word %in% c("right", "left")), by = "word") %>%
+  filter(!grepl("^[0-9]+$", word)) %>%
+  count(word, sort = TRUE) %>%
+  top_n(20, n) %>%
+  ggplot(aes(x=reorder(word, n), y =n)) +
+  geom_col() +
+  coord_flip() +
+  labs(x="Words", y="Count", title="Top 20 Words (Excluding Stop Words & Numbers)")
+```
+
+### Question 4
+
+Repeat question 2, but this time tokenize into bi-grams. How does the result change if you look at tri-grams?
+
+-   The bi-gram shows mostly combined stop words, whereas the tri-gram provides a little more insight into the transcriptions, with short phrases describing things, i.e., `the patient is`, `the operating room`, `prepped and draped`, `at this time`. The tri-gram is more descriptive, with the most common phrases being combinations of stop words and nouns/verbs/adjectives.
+
+```{r}
+## bi-gram
+mt_samples %>%
+  unnest_tokens(bigram, transcription, token = "ngrams", n=2) %>%
+  count(bigram, sort = TRUE) %>%
+  top_n(20,n)
+
+## tri-gram
+mt_samples %>%
+  unnest_tokens(trigram, transcription, token = "ngrams", n=3) %>%
+  count(trigram, sort = TRUE) %>%
+  top_n(20,n) %>%
+  print(n = 22)
+```
+
+### Question 5
+
+Using the results you got from Question 4, pick a word and count the words that appear before and after it.
+
+-   The word I chose is `incision`. The word itself appeared 3601 times.
+-   `the incision was` appeared 332 times, `skin incision was` appeared 163 times, and `an incision was` appeared 157 times. Any other combination of words with incision in the middle were used less than 100 times.
+-   The word `incision` had filler/stop words used after it (`and`, `was`), with mostly directional or medical terms having been used before it (ex., `transverse`, `longitudinal`, `midline`, `linear`).
+
+```{r}
+mt_samples %>%
+  unnest_tokens(trigram, transcription, token = "ngrams", n = 3) %>%
+  separate(trigram, c("word1", "word2", "word3"), sep = " ") %>%
+  filter(word2 == "incision") %>%
+  count(word1, word2, word3, sort = TRUE)
+```
+
+### Question 6
+
+Which words are most used in each of the specialties? You can use `group_by()` and `top_n()` from `dplyr` to have the calculations be done within each specialty. Remember to remove stop words. What are the 5 most-used words for each specialty?
+
+-   The most common words for each specialty typically relate to a specific body region seen by or medical terms used by each specialty; examples:
+    -   Cardio/Pulm: artery, coronary
+
+    -   Derm: skin
+
+    -   Diet/Nutrition: weight, carbohydrate
+
+    -   ENT: nasal, ear
+
+    -   Nephrology: renal, kidney
+
+    -   OB/GYN: uterus
+
+    -   SOAP/Chart: patient, mg, history, pain
+
+    -   Sleep: sleep, apnea
+
+    -   Surgery: procedure, anesthesia, incision
+
+```{r}
+mt_samples %>% 
+  unnest_tokens(word,transcription) %>% 
+  anti_join(stop_words,by="word") %>% 
+  filter(!grepl("^[0-9]+$",word)) %>% 
+  group_by(medical_specialty) %>% 
+  count(word,sort=TRUE) %>% 
+  top_n(5, n) %>% 
+  arrange(medical_specialty,desc(n))
+```
+
+### Question 7
+
+Find your own insight in the data.
+
+#### Admitting Diagnoses for Neonatology
+
+-   All cases involved infants or toddlers with prematurity, congenital syndromes, or acute respiratory or gastrointestinal distress
+-   Upon examining the transcriptions in full, it was found that:
+    -   Treatment and supportive care (e.g., antibiotics, oxygen, phototherapy) were the main methods of management; these were often initiated before definitive diagnosis
+
+```{r}
+mt_samples %>%
+  filter(medical_specialty == "Pediatrics - Neonatal") %>%
+  filter(grepl("ADMITTING DIAG", transcription, ignore.case = TRUE)) %>%
+  print()
+```
+
+#### Pre-operative Diagnoses for Neonatology
+
+-   All patients were admitted for procedures relating to chronic or congenital issues: otitis media, hydrocele, feeding dysfunction, and osteomyelitis requiring central access.
+
+```{r}
+mt_samples %>%
+  filter(medical_specialty == "Pediatrics - Neonatal") %>%
+  filter(grepl("PREOPERATIVE DIAG", transcription, ignore.case = TRUE)) %>%
+  print()
+```
+
+#### Pre-operative Diagnoses for Postpartum Patients
+
+-   All patients were in the immediate postpartum period and underwent procedures for either elective sterilization, cesarean delivery due to labor dystocia, or management of a hemorrhage.
+
+```{r}
+mt_samples %>%
+  filter(medical_specialty == "Obstetrics / Gynecology") %>%
+  filter(grepl("PREOPERATIVE DIAG", transcription, ignore.case = TRUE)) %>%
+  filter(grepl("postpartum", description, ignore.case = TRUE)) %>%
+  print()
+```
+
+#### Pre-operative Diagnoses for Neurosurgical Endoscopic Procedures
+
+-   All patients presented with obstructive or dysfunctional cerebrospinal fluid circulation
+
+```{r}
+mt_samples %>%
+  filter(medical_specialty == "Neurosurgery") %>%
+  filter(grepl("PREOPERATIVE DIAG", transcription, ignore.case = TRUE)) %>%
+  filter(grepl("endoscopic", description, ignore.case = TRUE)) %>%
+  print()
+```
+
+#### HPI for Hospice Patients
+
+-   All patients had terminal diagnoses: metastatic colorectal cancer, end-stage CHF, metastatic cervical cancer, and AIDS with multiple infections
+-   All cases reflected a prognosis of less than six months
+-   All cases emphasized the patients' DNR statuses
+
+```{r}
+mt_samples %>%
+  filter(medical_specialty == "Hospice - Palliative Care") %>%
+  filter(grepl("HISTORY", transcription, ignore.case = TRUE)) %>%
+  filter(!grepl("REASON FOR", transcription, ignore.case = TRUE)) %>%
+  print()
+```
+
+#### Cardiac Arrest Cases
+
+-   It appears all cases included older adults
+-   Upon examining the transcriptions in full, it was found that:
+    -   All four patients experienced cardiac arrest in the context of complex, multi-system illnesses.
+
+    -   Arrests were non-ischemic in origin; no acute coronary occlusion was found.
+
+    -   Each case reflects a different clinical path: procedural urgency, decompensation, and end-of-life transition.
+
+```{r}
+arrest_cases <- c(
+  "Urgent cardiac catheterization with coronary angiogra.",
+  "Mediastinal exploration and delayed primary chest closure. The patient is a 12-day-old infant who has undergone a modified stage I Norwood procedure with a Sano modification",
+  "Left hip fracture. The patient is a 53-year-old female with probable pathological fracture of the left proximal femur",
+  "Patient with a previous history of working in the coalmine and significant exposure to silica with resultant pneumoconiosis and fibrosis of the lung",
+  "History of diabetes, osteoarthritis, atrial fibrillation, hypertension, asthma, obstructive sleep apnea on CPAP, diabetic foot ulcer, anemia, and left lower extremity cellulitis",
+  "Cardiac arrest, severe congestive heart failure, acute on chronic respiratory failure, osteoporosis, and depression"
+)
+
+excluded_specialties <- c(
+  "Pediatrics - Neonatal",
+  "Emergency Room Reports",
+  "Consult - History and Phy.",
+  "Cardiovascular / Pulmonary"
+)
+
+pattern <- paste(arrest_cases, collapse = "|")
+
+filtered_data <- mt_samples %>%
+  filter(!medical_specialty %in% excluded_specialties) %>%
+  filter(grepl(pattern, description, ignore.case = TRUE)) %>%
+  select(description, medical_specialty, transcription)
+
+filtered_data
+```
